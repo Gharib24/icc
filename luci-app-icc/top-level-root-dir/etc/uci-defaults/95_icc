@@ -1,0 +1,11 @@
+#!/bin/sh
+
+#uci import icc < /dev/null
+
+#uci -q batch <<-EOF >/dev/null
+#	delete icc.@icc[-1]
+#	add icc icc
+#	set icc.@icc[-1].enabled=0
+#	commit icc
+#EOF
+exit 0

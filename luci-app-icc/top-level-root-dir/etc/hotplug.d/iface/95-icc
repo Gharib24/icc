@@ -1,0 +1,16 @@
+hotplug="$(uci -q get icc.@icc[-1].hotplug)"
+if [ "$hotplug" = "1" ]; then
+	if [ "$ACTION" = "ifup" -a "$INTERFACE" = "wwan" ]; then
+		ifname="$(uci -q get icc.@icc[-1].ifname)"
+		if [ "$ifname" != "$DEVICE" ]; then
+			uci set icc.@icc[-1].ifname="$DEVICE"
+			uci commit icc
+			logger -s -p notice -t "icc" "Hotplug changed monitoring device $ifname to ${DEVICE}"
+			
+			if [ "$(/etc/init.d/icc status 2>/dev/null)" = "running" ];then
+				/etc/init.d/icc restart
+				logger -s -p notice -t "icc" "Hotplug Restart the icc service, Action: $ACTION, Device: $DEVICE "
+			fi
+		fi
+	fi
+fi

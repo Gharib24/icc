@@ -1,0 +1,177 @@
+#!/bin/sh
+. /lib/functions.sh
+
+#date +%T -s "01:38:18"
+#date +%Y%m%d -s "1971-01-01"
+#/etc/init.d/sysntpd restart
+
+#-------------------------------------------------------------------------------
+NOTICE=1; EMERG=1; PANIC=1; CRIT=1; ALERT=1; ERROR=1; WARNING=1; INFO=1; DEBUG=0
+do_log_emerg(){
+	[ "$EMERG" = "1" ]&& logger -s -p emerg -t "icc" "$@"
+}
+do_log_panic(){
+	[ "$PANIC" = "1" ]&& logger -s -p panic -t "icc" "$@"
+}
+do_log_crit(){
+	[ "$CRIT" = "1" ]&& logger -s -p crit -t "icc" "$@"
+}
+do_log_alert(){
+	[ "$ALERT" = "1" ]&& logger -s -p alert -t "icc" "$@"
+}
+do_log_notice(){
+	[ "$NOTICE" = "1" ]&& logger -s -p notice -t "icc" "$@"
+}
+do_log_error(){
+	[ "$ERROR" = "1" ]&& logger -s -p error -t "icc" "$@"
+}
+do_log_warning(){
+	[ "$WARNING" = "1" ]&& logger -s -p warning -t "icc" "$@"
+}
+do_log_info(){
+	[ "$INFO" = "1" ]&& logger -s -p info -t "icc" "$@"
+}
+do_log_debug(){
+	[ "$DEBUG" = "1" ]&& logger -s -p debug -t "icc" "$@"
+}
+
+#-------------------------------------------------------------------------------
+init_var(){
+	cfg=$1
+	config_get IFNAME "$cfg" ifname  "unavailable"
+	config_get TIMEOUT "$cfg" timeout "unavailable"
+	config_get HOST "$cfg" host  "unavailable"
+	
+	config_get PANIC "$cfg" panic  "unavailable"
+	config_get INTERVAL "$cfg" interval "unavailable"
+	config_get HOTPLUG "$cfg" hotplug "unavailable"
+	config_get DEBUG "$cfg" debug  "unavailable"
+	
+	config_get IF_STARTUP_D "$cfg" if_startup_d "unavailable"
+	config_get IF_ONLINE_D "$cfg" if_online_d  "unavailable"
+	config_get IF_OFFLINE_D "$cfg" if_offline_d "unavailable"
+	config_get IF_PANIC_D "$cfg" if_panic_d  "unavailable"
+
+	do_log_info "Config general: ( interval: $INTERVAL panic: $PANIC hotplug: $HOTPLUG debug: $DEBUG )"
+	do_log_info "Config ping: ( Ifname: $IFNAME timeout: $TIMEOUT host: $HOST )"
+	do_log_info "Config hook: ( if_startup_d: $IF_STARTUP_D if_online_d: $IF_ONLINE_D if_offline_d: $IF_OFFLINE_D if_panic_d: $IF_PANIC_D )"
+}
+
+config_load icc
+config_foreach init_var icc
+#-------------------------------------------------------------------------------
+mkdir -p $IF_STARTUP_D
+mkdir -p $IF_ONLINE_D
+mkdir -p $IF_OFFLINE_D
+mkdir -p $IF_PANIC_D
+
+chmod -R +x $IF_STARTUP_D
+chmod -R +x $IF_ONLINE_D
+chmod -R +x $IF_OFFLINE_D
+chmod -R +x $IF_PANIC_D
+
+#-------------------------------------------------------------------------------
+scrpit_call(){
+	if [ -d "$1" ];then
+		scrpitdir="$1"
+		for script in $(ls $scrpitdir/* 2>&-); do
+			do_log_notice "Execute script: $script"
+			$script
+			script_exitcode=$?
+
+			if [ "$script_exitcode" != "0" ];then
+				do_log_warning "Exit code: $script_exitcode, $script"
+				break
+			fi
+		done
+	fi
+}
+scrpit_call "$IF_STARTUP_D"
+#-------------------------------------------------------------------------------
+status="unknown"
+script_exitcode="NotSet"
+savestatus="NotSet"
+export IFNAME
+export GLOBAL=$status
+time_to_ping=$((`date +%s` + $INTERVAL)); 
+panic_time_minutes="$(($PANIC*60))"
+time_to_panic=$((`date +%s` + $panic_time_minutes));
+
+while true; do
+	if [ `date +%s` -ge "$time_to_ping" -o "$status" = "unknown" ]; then
+		if [ "$INTERVAL" = "0" ]; then
+			interval="$(awk -v min=30 -v max=$((60*3)) 'BEGIN{srand(); print int(min+rand()*(max-min+1))}')"
+		fi
+		if /bin/ping -c 1 -W $TIMEOUT -I "$IFNAME" $HOST >/dev/null; then #
+			status="online"
+		else
+			status="offline"
+		fi
+		GLOBAL=$status
+		time_to_ping=$((`date +%s` + $interval));
+		
+		notice_msg="Interface: $IFNAME,
+			Network connection status: $status,
+			Ping destination: $HOST,
+			Next check: $(date --date @$(($interval + `date +%s`)) +%H:%M:%S),
+			Interval: $interval
+			"
+		do_log_notice $notice_msg
+	fi
+#-------------------------------------------------------------------------------
+	if [ "$savestatus" != "$status" -o "$script_exitcode" != "0" -o "$status" = "offline" ];then
+		if [ "$status" = "online" ];then
+			hook="$IF_ONLINE_D"
+		elif [ "$status" = "offline" ];then
+			hook="$IF_OFFLINE_D"
+		fi
+		savestatus=$status
+		scrpit_call "${hook}"
+	elif [ "$status" = "online" -a "$script_exitcode" = "0"  ];then
+		time_to_panic=$((`date +%s` + $panic_time_minutes));
+	fi
+
+	if [ "$time_to_panic" -le `date +%s` ]; then
+		scrpit_call "$IF_PANIC_D"
+		if [ "$script_exitcode" = "0" ];then
+			time_to_panic=$((`date +%s` + $panic_time_minutes));
+			savestatus="unknown"
+		fi
+	fi
+#-------------------------------------------------------------------------------
+	if [ "$DEBUG" = "1" ];then
+		debug_msg1="countdown interval time: $(date --date @$(($time_to_ping - `date +%s`)) +%H:%M:%S)"
+		debug_msg2="countdown panic time: $(date --date @$(($time_to_panic - `date +%s`)) +%H:%M:%S)"
+		do_log_debug "$debug_msg1, $debug_msg2"
+		sleep 1
+	else
+		sleep $interval
+	fi
+done
+
+#-------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#-------------------------------------------------------------------------------
