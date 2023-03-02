@@ -1,3 +1,8 @@
+![screenshot](screenshot/screenshot1.png)
+
+
+
+
 scp to router
 
 host=openwrt.lan
