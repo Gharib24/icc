@@ -1,0 +1,34 @@
+{
+	"admin/services/icc": {
+		"title": "ICC",
+		"order": 95,
+		"action": {
+			"type": "view",
+			"path": "icc/overview"
+		},
+		"depends": {
+			"acl": [ "luci-app-icc" ],
+			"fs": {
+			
+			},
+			"uci": { "icc": true }
+		}
+	},
+	"admin/services/icc/overview": {
+		"title": "Overview",
+		"order": 10,
+		"action": {
+			"type": "view",
+			"path": "icc/overview"
+		}
+	},
+	"admin/services/icc/logread": {
+		"title": "Log View",
+		"order": 20,
+		"action": {
+			"type": "view",
+			"path": "icc/logread"
+		}
+	}
+}
+
