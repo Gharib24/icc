@@ -1,6 +1,6 @@
-![screenshot](1.png)
+![screenshot](Documents/1.png)
 
-![screenshot](2.png)
+![screenshot](Documents/2.png)
 
 
 scp to router
