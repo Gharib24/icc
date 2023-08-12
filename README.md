@@ -1,9 +1,8 @@
 # luci-app-icc & icc
         
 
-## Description
+### Description
 Internet Connection Checker for OpenWrt
-
 
 ### Build From Source
 
@@ -28,7 +27,7 @@ git clone https://github.com/Gharib24/icc package/icc
 3. Choose luci-app-icc as a module or built-in module
 
 ```shell
-$ make menuconfig
+make menuconfig
 
 ...
 
