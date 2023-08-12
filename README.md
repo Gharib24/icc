@@ -1,8 +1,5 @@
-
-
-
-#ICC
-
+#luci-app-icc & icc
+        
 
 ## Description
 Internet Connection Checker for OpenWrt
@@ -37,7 +34,7 @@ $ make menuconfig
 
 LuCI  --->
     Applications  --->
-        <M> luci-app-icc
+        <*> luci-app-icc
 
 ...
 
@@ -46,7 +43,7 @@ LuCI  --->
 4. Build packages
 
 ```shell
-$ make package/icc/icc/{clean,compile} V=s
+make package/icc/luci-app-icc/{clean,compile} V=s
 ```
 
 ## Screenshot 
