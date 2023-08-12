@@ -1,0 +1,123 @@
+#!/bin/sh
+. /usr/share/libubox/jshn.sh
+
+#/etc/init.d/rpcd restart
+#ubus -v list luci.icc
+#ubus -v call luci.icc getLEDs
+##call luci.icc setInitAction '{"name":"icc", "action":"status"}'
+
+readonly iccDataFile="/tmp/icc.json"
+print_json_bool() { json_init; json_add_boolean "$1" "$2"; json_dump; json_cleanup; }
+print_json_string() { json_init; json_add_string "$1" "$2"; json_dump; json_cleanup; }
+
+set_init_action() {
+	local name=$1 action="$2" cmd
+	
+	if [ ! -f "/etc/init.d/$name" ]; then
+		print_json_string 'error' 'Init script not found!'
+		return
+	fi
+	
+	case $action in
+		start|stop|reload|restart|status|running|enabled|enable|disable)
+			cmd="/etc/init.d/${name} ${action}";;
+		*)
+			print_json_string 'error' 'Invalid action1'
+			return
+			;;
+	esac
+	
+	if [ -n "$cmd" ] && eval "${cmd}" 1>/dev/null 2>&1; then
+		print_json_bool "result" '1'
+		return
+	else
+		print_json_bool "result" '0'
+		return
+	fi
+}
+
+get_Status() {
+	local name=$1
+	if [ -f "$iccDataFile" ]; then
+		case $name in
+		version|status)
+			json_init
+			json_load_file "$iccDataFile"
+			json_get_var var1 "$name" unavailable
+			print_json_string "$name" "$var1"
+			return
+		;;
+		all)
+			data="$(cat "$iccDataFile")"
+			echo "{'$name': $data}"
+			return
+		;;
+		*)
+			print_json_string 'error' 'Invalid name'
+			return
+		;;
+	esac
+	
+	else
+		print_json_string 'error' "$iccDataFile not exist"
+		return
+	fi
+}
+
+case "$1" in
+	list)
+		json_init
+		json_add_object "setInitAction"
+			json_add_string 'name' 'str'
+			json_add_string 'action' 'str'
+		json_close_object
+		json_add_object "getData"
+			json_add_string 'name' 'str'
+		json_close_object
+		json_add_object "getLEDs"
+		json_close_object
+		json_add_object "set_data"
+			json_add_string ''
+		json_close_object
+		json_dump
+		json_cleanup
+	;;
+	call)
+		case "$2" in
+			setInitAction)
+				# read the arguments
+				read -r input
+				json_load "$input"
+				json_get_var name 'name' 
+				json_get_var action 'action'
+				json_cleanup
+				set_init_action "$name" "$action"
+				;;
+
+			getData)
+				read -r input
+				json_load "$input"
+				json_get_var name 'name'
+				json_cleanup
+				get_Status "$name"
+				;;
+			getLEDs)
+				read -r input
+				json_load "$input"
+				json_get_var name 'name' 
+				json_cleanup
+				
+				json_init
+				json_add_array 'leds'
+				for i in /sys/class/leds/*; do
+					json_add_string '' "$(basename "$i")";
+				done
+				json_close_array
+				json_dump
+				json_cleanup
+				print_json_string "$name"
+				return
+			;;
+		esac
+	;;
+esac
