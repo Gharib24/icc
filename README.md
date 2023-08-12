@@ -19,8 +19,8 @@ cd openwrt
 2. Prepare build environment
 
 ```shell
-$ ./scripts/feeds update -a
-$ ./scripts/feeds install -a
+./scripts/feeds update -a
+./scripts/feeds install -a
 
 git clone https://github.com/Gharib24/icc package/icc
 ```
