@@ -1,10 +1,11 @@
 
 
 
-# Luci App ICC
+#ICC
 
 
 ## Description
+Internet Connection Checker for OpenWrt
 
 
 ### Build From Source
