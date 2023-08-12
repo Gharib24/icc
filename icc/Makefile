@@ -23,7 +23,7 @@ endef
 
 define Package/icc/description
  Internet connection checker.
- Please see https://github.com/openwrt/packages/ag/master/net/icc/files/README.md for further information.
+ Please see https://github.com/Gharib24/icc/blob/master/README.md for further information.
 
 endef
 
