@@ -17,7 +17,7 @@ define Package/icc
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=Internet connection checker
-	DEPENDS:=+jshn +jsonfilter +curl
+	DEPENDS:=+jshn +jsonfilter
 	PKGARCH:=all
 endef
 
