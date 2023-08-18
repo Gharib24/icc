@@ -33,7 +33,7 @@ make menuconfig
 
 LuCI  --->
     Applications  --->
-        <*> luci-app-icc
+        <M> luci-app-icc
 
 ...
 
@@ -42,13 +42,13 @@ LuCI  --->
 4. Build packages
 
 ```shell
-make package/icc/luci-app-icc/{clean,compile} V=s
+make package/icc/luci-app-icc/compile V=s
 ```
 
 ## Screenshot 
-![screenshot](documents/1.png)
+![screenshot](Documents/1.png)
 
 
-![screenshot](documents/2.png)
+![screenshot](Documents/2.png)
 
 
