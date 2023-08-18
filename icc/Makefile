@@ -42,19 +42,19 @@ endef
 
 define Package/icc/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) ./base-files/usr/bin/icc.sh $(1)/usr/bin
+	$(INSTALL_BIN) ./files/usr/bin/icc.sh $(1)/usr/bin
 
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./base-files/etc/init.d/icc $(1)/etc/init.d/icc
+	$(INSTALL_BIN) ./files/etc/init.d/icc $(1)/etc/init.d/icc
 
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./base-files/etc/uci-defaults/95_icc $(1)/etc/uci-defaults/95_icc
 
 	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_CONF) ./base-files/etc/config/icc $(1)/etc/config/icc
+	$(INSTALL_CONF) ./files/etc/config/icc $(1)/etc/config/icc
 
 	$(INSTALL_DIR) $(1)/etc/icc/user-scripts
-	$(INSTALL_BIN) ./base-files/etc/icc/user-scripts/00-test.sh $(1)/etc/icc/user-scripts/00-test.sh
+	$(INSTALL_BIN) ./files/etc/icc/user-scripts/00-test.sh $(1)/etc/icc/user-scripts/00-test.sh
 endef
 
 $(eval $(call BuildPackage,icc))
