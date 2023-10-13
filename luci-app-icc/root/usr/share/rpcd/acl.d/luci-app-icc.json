@@ -3,7 +3,7 @@
 		"description": "Grant access to LuCI app ICC",
 		"read": {
 			"ubus": {
-				"luci.icc": [ "getData", "getLEDs" ]
+				"luci.icc": [ "get_icc_version", "get_data", "get_leds" ]
 			},
 			"file": {
 				"/sbin/logread -e icc": [ "exec" ],
@@ -12,13 +12,14 @@
 		},
 		"write": {
 			"ubus": {
-				"luci.icc": [ "setInitAction" ]
+				"luci.icc": [ "set_init_action" ]
 			},
 			"uci": [ "icc" ]
 			
 		}
 	}
 }
+
 
 
 
