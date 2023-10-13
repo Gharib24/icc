@@ -6,7 +6,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=icc
-PKG_VERSION:=23.02
+PKG_VERSION:=1.0.1
 PKG_RELEASE:=1
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_MAINTAINER:=AG <ag@ag.org>
@@ -53,8 +53,7 @@ define Package/icc/install
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_CONF) ./files/etc/config/icc $(1)/etc/config/icc
 
-	$(INSTALL_DIR) $(1)/etc/icc/user-scripts
-	$(INSTALL_BIN) ./files/etc/icc/user-scripts/00-test.sh $(1)/etc/icc/user-scripts/00-test.sh
+	$(INSTALL_DIR) $(1)/etc/hotplug.d/icc
 endef
 
 $(eval $(call BuildPackage,icc))

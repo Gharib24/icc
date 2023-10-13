@@ -5,33 +5,35 @@ USE_PROCD=1
 START=97
 STOP=01
 
-prog="icc"
-conf="/etc/config/$prog"
-pidfile="/var/run/$prog.pid"
-script="/usr/bin/$prog.sh"
-logtag="$prog"
-service_action='start'
+PROG="icc"
+CONF="/etc/config/$PROG"
+PIDFILE="/var/run/$PROG.pid"
+SCRIPT="/usr/bin/$PROG.sh"
+ICC_STATE="/var/run/icc.state"
 
 start_service() {
-	config_load "$prog"
-	config_get interface $prog interface
+	config_load "$PROG"
+	config_get interface $PROG interface
 	
-	network_flush_cache
-	network_get_device device $interface
+#	network_flush_cache
+#	network_get_device device $interface
+#	logger -p info -t icc "$interface "
 
-	procd_open_instance "${prog}"
-	procd_set_param command $script $interface $device
+	procd_open_instance
+	procd_set_param command $SCRIPT $interface $device
 	procd_set_param respawn ${respawn_threshold:-3600} ${respawn_timeout:-3} ${respawn_retry:-3}
-	procd_set_param env LOGTAG="$logtag" SERVICE_ACTION="$action" INTERFACE="$interface" DEVICE="$device"
+#	procd_set_param env INTERFACE="$interface" DEVICE=""
 	procd_set_param stdout 0
 	procd_set_param stderr 0
-	procd_set_param pidfile $pidfile
+	procd_set_param pidfile $PIDFILE
 	procd_close_instance
 }
 
 service_triggers() {
-	procd_add_reload_trigger "${prog}"
-	procd_add_reload_interface_trigger $interface
+	procd_add_reload_trigger "${PROG}"
+	for i in $interface;do
+		procd_add_reload_interface_trigger $i
+	done
 }
 
 reload_service() {
@@ -40,10 +42,7 @@ reload_service() {
 }
 
 service_stopped() {
-	if [ "$action" = "stop" ]; then
-		SERVICE_ACTION="$action" $script
-		rm -f  /tmp/icc.json
-	fi
+	rm -f  $ICC_STATE
 }
 
 
