@@ -17,7 +17,6 @@ init_var() {
 	config_get indicate "$1" indicate
 	
 }
-time_to_ping=$((`date +%s` + 0))
 
 config_load icc
 config_foreach init_var icc
@@ -32,7 +31,7 @@ network_flush_cache
 for i in $interface ;do
 #	network_get_physdev device $i
 	network_get_device device $i
-	[ -z "$device" ] && device="Error Network device is not presen"
+	[ -z "$device" ] && device="Error Network device is not present"
 	json_add_object "$i"
 	json_add_string "device" "$device"
 	json_add_string "status" "unknown"
@@ -44,6 +43,8 @@ done
 unset __NETWORK_CACHE
 json_dump >$ICC_STATE
 #json_cleanup
+time_to_ping=$((`date +%s` + 0))
+
 [ ! -z "$mode" ] && {
 	panic_time_minutes="$(($panic*60))"
 	time_to_panic=$((`date +%s` + $panic_time_minutes))
@@ -111,7 +112,7 @@ while true; do
 			INTERFACE=$i 
 			DEVICE=$device
 
-			if [[ "$device" =~ "Error Network device is not presen" ]]; then
+			if [[ "$device" =~ "Error Network device is not present" ]]; then
 				json_add_string "host" "N/A"
 			else
 				json_add_string "ping" "true"
