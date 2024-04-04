@@ -25,7 +25,7 @@ echo "src-git icc_package https://github.com/Gharib24/icc" >> feeds.conf.default
 ./scripts/feeds install -a
 ```
 
-3. Choose to build luci-app-icc as a module or built-in module
+3. Choose to build **luci-app-icc** as a module or built-in module
 
 ```shell
 make menuconfig
