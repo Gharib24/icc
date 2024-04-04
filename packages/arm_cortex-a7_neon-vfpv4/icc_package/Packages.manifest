@@ -1,0 +1,34 @@
+Package: icc
+Version: 1.0.2-1
+Depends: libc, base-files, jshn, jsonfilter
+Source: /home/ag/Documents/OpenWrt/build-system/my_package/icc/net/network/icc
+SourceName: icc
+License: GPL-3.0-or-later
+Section: net
+SourceDateEpoch: 1711216322
+Maintainer: AG <ag@ag.org>
+Architecture: all
+Installed-Size: 2466
+Filename: icc_1.0.2-1_all.ipk
+Size: 3328
+SHA256sum: e3e06c0c0ce34043d48596c9e7e635d6b4f5096b4ff5dfbccdf5bda16739afcd
+Description:  Internet connection checker.
+ Please see https://github.com/Gharib24/icc/blob/master/README.md for further information.
+ 
+
+Package: luci-app-icc
+Version: git-24.095.72118-ff9e8b8
+Depends: libc, icc
+Source: /home/ag/Documents/OpenWrt/build-system/my_package/icc/luci/applications/luci-app-icc
+SourceName: luci-app-icc
+License: GPL-3.0-or-later
+Section: luci
+SourceDateEpoch: 1712260918
+Maintainer: OpenWrt LuCI community
+Architecture: all
+Installed-Size: 4939
+Filename: luci-app-icc_git-24.095.72118-ff9e8b8_all.ipk
+Size: 5811
+SHA256sum: d89edf1834d83f1db418651cdc30f04d6621887eb7b984ec80248c8abacd2935
+Description:  LuCI support for icc
+
