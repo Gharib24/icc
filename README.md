@@ -8,7 +8,7 @@ Internet Connection Checker for OpenWrt
 
 1. Download Openwrt Source Code to build the package.
 
-```bash
+```shell
 
 git clone https://github.com/openwrt/openwrt
 cd openwrt
@@ -17,7 +17,7 @@ cd openwrt
 
 2. Feed Configuration
 
-```bash
+```shell
 
 echo "src-git icc_package https://github.com/Gharib24/icc" >> feeds.conf.default
 
@@ -27,7 +27,7 @@ echo "src-git icc_package https://github.com/Gharib24/icc" >> feeds.conf.default
 
 3. Choose to build **luci-app-icc** as a module or built-in module
 
-```bash
+```shell
 make menuconfig
 
 ...
@@ -42,7 +42,7 @@ LuCI  --->
 
 4. Build packages
 
-```bash
+```shell
 make package/feeds/icc_package/luci-app-icc/compile V=s
 ```
 
