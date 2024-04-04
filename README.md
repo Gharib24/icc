@@ -46,9 +46,9 @@ make package/icc/luci-app-icc/compile V=s
 ```
 
 ## Screenshot 
-![screenshot](documents/1.png)
+![screenshot](.documents/1.png)
 
 
-![screenshot](documents/2.png)
+![screenshot](.documents/2.png)
 
 
