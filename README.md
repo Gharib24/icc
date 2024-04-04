@@ -15,13 +15,14 @@ cd openwrt
 
 ```
 
-2. Prepare build environment
+2. Feed Configuration
 
 ```shell
+
+echo "src-git icc_package https://github.com/Gharib24/icc" >> feeds.conf.default
+
 ./scripts/feeds update -a
 ./scripts/feeds install -a
-
-git clone https://github.com/Gharib24/icc package/icc
 ```
 
 3. Choose luci-app-icc as a module or built-in module
@@ -42,7 +43,7 @@ LuCI  --->
 4. Build packages
 
 ```shell
-make package/icc/luci-app-icc/compile V=s
+make package/feeds/icc_package/luci-app-icc/compile V=s
 ```
 
 ## Screenshot 
