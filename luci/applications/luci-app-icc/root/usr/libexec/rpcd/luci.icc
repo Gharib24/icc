@@ -1,0 +1,138 @@
+#!/bin/sh
+. /usr/share/libubox/jshn.sh
+
+#/etc/init.d/rpcd restart
+#ubus -v list luci.icc
+#ubus -v call luci.icc get_icc_version
+#ubus -v call luci.icc get_data
+#ubus -v call luci.icc get_leds
+#ubus -v call luci.icc set_init_action '{"name":"icc", "action":"status"}'
+#ubus -v call luci.icc get_status '{"name":"wan"}'
+
+readonly ICC_STATE="/var/run/icc.state"
+print_json_bool() { json_init; json_add_boolean "$1" "$2"; json_dump; json_cleanup; }
+print_json_string() { json_init; json_add_string "$1" "$2"; json_dump; json_cleanup; }
+print_json_int() { json_init; json_add_int "$1" "$2"; json_dump; json_cleanup; }
+
+_set_init_action() {
+	local name=$1 action="$2" cmd
+	
+	if [ ! -f "/etc/init.d/$name" ]; then
+		print_json_string 'error' 'Init script not found!'
+		return
+	fi
+	
+	case $action in
+		start|stop|reload|restart|status|running|enabled|enable|disable)
+			cmd="/etc/init.d/${name} ${action}";;
+		*)
+			print_json_string 'error' 'Invalid action1'
+			return
+			;;
+	esac
+	
+	if [ -n "$cmd" ] && eval "${cmd}" 1>/dev/null 2>&1; then
+		print_json_bool "result" '1'
+		return
+	else
+		print_json_bool "result" '0'
+		return
+	fi
+}
+
+case "$1" in
+	list)
+		json_init
+		json_add_object "get_icc_version"
+			json_close_object
+		json_add_object "set_init_action"
+			json_add_string 'name' 'str'
+			json_add_string 'action' 'str'
+			json_close_object
+		json_add_object "get_status"
+			json_add_string 'name' 'str'
+			json_close_object
+		json_add_object "get_data"
+			json_close_object
+		json_add_object "set_data"
+			json_add_string ''
+			json_close_object
+		json_add_object "get_leds"
+			json_close_object
+		json_dump
+		json_cleanup
+	;;
+	call)
+		case "$2" in
+			set_init_action)
+				# read the arguments
+				read -r input
+				json_load "$input"
+				json_get_var name 'name' 
+				json_get_var action 'action'
+				json_cleanup
+				_set_init_action "$name" "$action"
+			;;
+			get_status)
+				read -r input
+				json_load "$input"
+				json_get_var name 'name'
+				json_cleanup
+				if [ -f "$ICC_STATE" ]; then
+					json_init
+					json_load_file "$ICC_STATE"
+					json_select interface
+					json_select $name
+					json_get_var status status
+					print_json_string "$name" "$status"
+				else
+					print_json_string 'error' "file: $ICC_STATE not exist"
+				fi
+				return
+			;;
+			get_data)
+				read -r input
+				json_load "$input"
+				json_get_var name 'name'
+				json_cleanup
+				if [ -f "$ICC_STATE" ]; then
+					json_init
+					json_load_file "$ICC_STATE"
+					json_dump
+				else
+					print_json_string 'error' "file: $ICC_STATE not exist"
+				fi
+				return
+			;;
+			get_icc_version)
+				read -r input
+				json_load "$input"
+				json_get_var name 'name'
+				json_cleanup
+				version="$(opkg list-installed |grep "^icc"| sed "s/icc -//")"
+				[ -z "$version" ]&&{
+					version="undefined"
+				}
+				print_json_string "version" "$version"
+				return
+			;;
+			get_leds)
+				read -r input
+				json_load "$input"
+				json_get_var name 'name' 
+				json_cleanup
+				
+				json_init
+				json_add_array 'leds'
+				for i in /sys/class/leds/*; do
+					json_add_string '' "$(basename "$i")";
+				done
+				json_close_array
+				json_dump
+				json_cleanup
+				print_json_string "$name"
+				return
+			;;
+		esac
+	;;
+esac

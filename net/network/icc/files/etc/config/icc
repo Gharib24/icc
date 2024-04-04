@@ -1,0 +1,12 @@
+
+config icc
+	option enabled '0'
+	option timeout '5'
+	option interval '300'
+	option debug '0'
+	list interface 'wan'
+	list interface 'wwan'
+	list host 'openwrt.org'
+	list host '8.8.8.8'
+	list host '8.8.4.4'
+

@@ -1,0 +1,33 @@
+{
+	"luci-app-icc": {
+		"description": "Grant access to LuCI app ICC",
+		"read": {
+			"ubus": {
+				"luci.icc": [ "get_icc_version", "get_data", "get_leds" ]
+			},
+			"file": {
+				"/sbin/logread -e icc": [ "exec" ],
+			},
+			"uci": [ "icc" ]
+		},
+		"write": {
+			"ubus": {
+				"luci.icc": [ "set_init_action" ]
+			},
+			"uci": [ "icc" ]
+			
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
