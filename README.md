@@ -24,8 +24,7 @@ echo "src-git icc_package https://github.com/Gharib24/icc" >> feeds.conf.default
 ./scripts/feeds update -a
 ./scripts/feeds install -a
 ```
-Hi here is some text <span style="color: red">this is red</span>.
-3. Choose to build **luci-app-icc** as a module or built-in module
+$\color{red}{\textsf{3.}}$ Choose to build **luci-app-icc** as a module or built-in module
 
 ```shell
 make menuconfig
