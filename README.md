@@ -6,7 +6,7 @@ Internet Connection Checker for OpenWrt
 
 ### Build From Source
 
-1. Download Openwrt Source Code to build the package.
+$\color{red}{\textsf{1.}}$ Download Openwrt Source Code to build the package.
 
 ```shell
 
@@ -15,7 +15,7 @@ cd openwrt
 
 ```
 
-2. Feed Configuration
+$\color{red}{\textsf{2.}}$ Feed Configuration
 
 ```shell
 
@@ -39,7 +39,7 @@ LuCI  --->
 
 ```
 
-4. Build packages
+$\color{red}{\textsf{4.}}$ Build packages
 
 ```shell
 make package/feeds/icc_package/luci-app-icc/compile V=s
