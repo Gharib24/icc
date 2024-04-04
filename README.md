@@ -42,7 +42,7 @@ LuCI  --->
 
 4. Build packages
 
-```shell
+```console
 make package/feeds/icc_package/luci-app-icc/compile V=s
 ```
 
